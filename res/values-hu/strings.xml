@@ -43,6 +43,7 @@
   <string name="confirm_download_cancelation_dialog_message">Később folytatni tudja a letöltést, amennyiben ugyanezt a frissítést választja újra</string>
   <string name="download_cancelled">Letöltés megszakítva</string>
   <string name="download_already_running">A letöltés jelenleg is fut</string>
+  <string name="unable_to_stop_download">Nem sikerült leállítani a letöltést</string>
   <string name="unable_to_download_file">Nem sikerült letölteni a frissítő fájlt</string>
   <string name="download_not_found">Nem található a letöltés</string>
   <string name="not_download_success">Frissítés sikeresen letöltve</string>
@@ -63,6 +64,7 @@
   <string name="delete_updates_failure_message">Hiba történt a frissítő fájlok törlésekor</string>
   <string name="delete_updates_noFolder_message">Frissítéseket tartalmazó mappa nem található</string>
   <string name="delete_updates_success_message">Az összes letöltött frissítés törölve</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <string name="header_os">LineageOS\n%1$s</string>
   <string name="header_summary">%1$s\n%2$s • Android %3$s\n%4$s</string>
@@ -71,7 +73,9 @@
   <string name="type_installed">• Telepített</string>
   <string name="type_downloaded">• Letöltött</string>
   <string name="type_downloading">• Letöltés</string>
+  <string name="type_completing">• Befejezése</string>
   <string name="summary">%1$s\nLineageOS %2$s • Android %3$s</string>
-  <string name="download_button">Letöltés</string>
   <string name="install_button">Telepítés</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Frissítés alkalmazása</string>
 </resources>

@@ -43,6 +43,7 @@
   <string name="confirm_download_cancelation_dialog_message">¿Encaboxar la descarga actual?</string>
   <string name="download_cancelled">Encaboxóse la descarga</string>
   <string name="download_already_running">Yá hai una descarga n\'execución</string>
+  <string name="unable_to_stop_download">Nun pue parase la descarga</string>
   <string name="unable_to_download_file">Nun pue baxase\'l ficheru d\'anovamientu</string>
   <string name="download_not_found">Nun s\'alcontró la descarga</string>
   <string name="not_download_success">L\'anovamientu baxóse con ésitu</string>
@@ -53,7 +54,6 @@
   <!-- Apply update strings -->
   <string name="apply_update_dialog_title">Aplicar anovamientu</string>
   <string name="apply_update_dialog_text">Tas a piques d\'anovar a <xliff:g id="filename">%s</xliff:g>.\n\nSi primes ANOVAR, el preséu reaniciaráse solu al recovery pa instalar l\'anovamientu.\n\nNota: Esta carauterística rique un recovery compatible o los anovamientos precisarán instalase a mano.</string>
-  <string name="apply_unable_to_reboot_toast">Nun pue reaniciase nel mou recovery</string>
   <!-- deleting -->
   <string name="confirm_delete_dialog_title">Desaniciar ficheru</string>
   <string name="confirm_delete_dialog_title_tv">Primi pa desaniciar tolos anovamientos baxaos nel almacenamientu internu</string>
@@ -63,6 +63,7 @@
   <string name="delete_updates_failure_message">Hebo un fallu desaniciando\'l ficheru d\'anovamientu</string>
   <string name="delete_updates_noFolder_message">Nun s\'alcontró la carpeta d\'anovamientos</string>
   <string name="delete_updates_success_message">Desaniciáronse tolos anovamientos baxaos</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <string name="header_os">LineageOS\n%1$s</string>
   <string name="header_summary">%1$s\n%2$s • Android %3$s\n%4$s</string>
@@ -71,7 +72,10 @@
   <string name="type_installed">• Instaláu</string>
   <string name="type_downloaded">• Baxáu</string>
   <string name="type_downloading">• Baxando</string>
+  <string name="type_completing">• Completando</string>
   <string name="summary">%1$s\nLineageOS %2$s • Android %3$s</string>
   <string name="download_button">Baxar</string>
   <string name="install_button">Instalar</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Aplicar anovamientu</string>
 </resources>

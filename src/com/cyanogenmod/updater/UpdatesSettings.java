@@ -31,6 +31,10 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +48,7 @@ import com.cyanogenmod.updater.misc.Constants;
 import com.cyanogenmod.updater.misc.State;
 import com.cyanogenmod.updater.misc.UpdateInfo;
 import com.cyanogenmod.updater.receiver.DownloadReceiver;
+import com.cyanogenmod.updater.service.ABOTAService;
 import com.cyanogenmod.updater.service.UpdateCheckService;
 import com.cyanogenmod.updater.utils.UpdateFilter;
 import com.cyanogenmod.updater.utils.Utils;
@@ -110,6 +115,46 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
                     }
                 }
                 updateLayout();
+            } else if (ABOTAService.ACTION_UPDATE_INSTALL_FINISHED.equals(action)) {
+                String filename = intent.getStringExtra(ABOTAService.EXTRA_ZIP_NAME);
+                UpdatePreference pref = (UpdatePreference) mUpdatesList.findPreference(filename);
+                if (pref != null) {
+                    pref.setStyle(UpdatePreference.STYLE_INSTALLED);
+                }
+
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.ab_update_finished_title)
+                        .setMessage(R.string.ab_update_finished_message)
+                        .setPositiveButton(R.string.dialog_reboot, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Utils.triggerReboot(mContext);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do nothing and allow the dialog to be dismissed
+                            }
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                // Do nothing and allow the dialog to be dismissed
+                            }
+                        })
+                        .show();
+            } else if (ABOTAService.ACTION_UPDATE_INSTALL_ERRORED.equals(action)) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                }
+
+                mStartUpdateVisible = false;
+                ABOTAService.setABUpdateRunning(false);
+                int errorCode = intent.getIntExtra(ABOTAService.EXTRA_ERROR_CODE, -1);
+                ABOTAService.notifyOngoingABOTA(context, -1, errorCode);
+                showSnack(String.format(mContext.getString(R.string.installing_zip_failed, errorCode)));
             }
         }
     };
@@ -127,6 +172,8 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
 
         // Load the stored preference data
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        cleanupPrefs();
+
         if (mUpdateCheck != null) {
             int check = mPrefs.getInt(Constants.UPDATE_CHECK_PREF, Constants.UPDATE_FREQ_WEEKLY);
             mUpdateCheck.setValue(String.valueOf(check));
@@ -135,10 +182,10 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
         }
 
         // Force a refresh if UPDATE_TYPE_PREF does not match release type
-        int updateType = Utils.getUpdateType();
-        int updateTypePref = mPrefs.getInt(Constants.UPDATE_TYPE_PREF,
-                Constants.UPDATE_TYPE_SNAPSHOT);
-        if (updateTypePref != updateType) {
+        String updateType = Utils.getUpdateType();
+        String updateTypePref = mPrefs.getString(Constants.UPDATE_TYPE_PREF,
+                Constants.CM_UPDATE_TYPE_DEFAULT);
+        if (!TextUtils.equals(updateTypePref, updateType)) {
             updateUpdatesType(updateType);
         }
     }
@@ -196,6 +243,8 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
 
         IntentFilter filter = new IntentFilter(UpdateCheckService.ACTION_CHECK_FINISHED);
         filter.addAction(DownloadReceiver.ACTION_DOWNLOAD_STARTED);
+        filter.addAction(ABOTAService.ACTION_UPDATE_INSTALL_FINISHED);
+        filter.addAction(ABOTAService.ACTION_UPDATE_INSTALL_ERRORED);
         mContext.registerReceiver(mReceiver, filter);
 
         checkForDownloadCompleted(getActivity().getIntent());
@@ -223,6 +272,11 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
 
         if (mDownloading) {
             showSnack(mContext.getString(R.string.download_already_running));
+            return;
+        }
+
+        if (ABOTAService.isABUpdateRunning()) {
+            showSnack(mContext.getString(R.string.ab_update_running));
             return;
         }
 
@@ -369,8 +423,8 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
                 .show();
     }
 
-    private void updateUpdatesType(int type) {
-        mPrefs.edit().putInt(Constants.UPDATE_TYPE_PREF, type).apply();
+    private void updateUpdatesType(String type) {
+        mPrefs.edit().putString(Constants.UPDATE_TYPE_PREF, type).apply();
         checkForUpdates();
     }
 
@@ -421,7 +475,7 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
     }
 
     void checkForUpdates() {
-        if (mProgressDialog != null) {
+        if (mProgressDialog != null || ABOTAService.isABUpdateRunning()) {
             return;
         }
 
@@ -476,7 +530,12 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
         final LinkedList<UpdateInfo> updates = new LinkedList<UpdateInfo>();
 
         for (String fileName : existingFiles) {
-            updates.add(new UpdateInfo.Builder().setFileName(fileName).build());
+            updates.add(new UpdateInfo.Builder()
+                    .setFileName(fileName)
+                    .setVersion(Utils.getVersionFromFileName(fileName))
+                    .setBuildDate(Utils.getTimestampFromFileName(fileName))
+                    .setType(Utils.getTypeFromFileName(fileName))
+                    .build());
         }
         for (UpdateInfo update : availableUpdates) {
             // Only add updates to the list that are not already downloaded
@@ -536,6 +595,8 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
             return;
         }
 
+        UpdateInfo current = Utils.getInstalledUpdateInfo();
+
         // Clear the list
         mUpdatesList.removeAll();
 
@@ -545,7 +606,9 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
             boolean isDownloading = ui.getFileName().equals(mFileName);
             int style;
 
-            if (isDownloading) {
+            if (!current.isCompatible(ui)) {
+                style = UpdatePreference.STYLE_BLOCKED;
+            } else if (isDownloading) {
                 // In progress download
                 style = UpdatePreference.STYLE_DOWNLOADING;
             } else if (isDownloadCompleting(ui.getFileName())) {
@@ -650,7 +713,7 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
         boolean success;
         //mUpdateFolder: Foldername with fullpath of SDCARD
         if (mUpdateFolder.exists() && mUpdateFolder.isDirectory()) {
-            deleteDir(mUpdateFolder);
+            Utils.deleteDir(mUpdateFolder);
             mUpdateFolder.mkdir();
             success = true;
             showSnack(mContext.getString(R.string.delete_updates_success_message));
@@ -663,30 +726,85 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
         return success;
     }
 
-    private static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String aChildren : children) {
-                boolean success = deleteDir(new File(dir, aChildren));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        // The directory is now empty so delete it
-        return dir.delete();
-    }
-
     @Override
     public void onStartUpdate(UpdatePreference pref) {
-        final UpdateInfo updateInfo = pref.getUpdateInfo();
-
-        // Prevent the dialog from being triggered more than once
+        // Prevent the update from being triggered more than once
         if (mStartUpdateVisible) {
             return;
         }
 
+        if (ABOTAService.isABUpdateRunning()) {
+            showSnack(mContext.getString(R.string.ab_update_running));
+            return;
+        }
+
         mStartUpdateVisible = true;
+
+        if (Utils.isABUpdate(mContext, pref.getUpdateInfo().getFileName())) {
+            startABUpdate(pref);
+        } else {
+            startRecoveryUpdate(pref);
+        }
+    }
+
+    private void startABUpdate(UpdatePreference pref) {
+        final UpdateInfo updateInfo = pref.getUpdateInfo();
+
+        ABOTAService.setABUpdateRunning(true);
+
+        // Get the message body right
+        String dialogBody = getString(R.string.apply_update_dialog_text_ab, updateInfo.getName());
+
+        new AlertDialog.Builder(getActivity())
+            .setTitle(R.string.apply_ab_update_dialog_title)
+            .setMessage(dialogBody)
+            .setPositiveButton(R.string.dialog_update, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ABOTAService.notifyOngoingABOTA(mContext, -1, ABOTAService.STATUS_PREPARING_ZIP);
+                    pref.setStyle(UpdatePreference.STYLE_INSTALLING);
+                    Utils.triggerUpdateAB(mContext, updateInfo.getFileName());
+
+                    try {
+                        Thread.sleep(800);
+                    } catch (Exception e) {
+                        // Ignore.
+                    }
+
+                    new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.apply_ab_update_dialog_title)
+                        .setMessage(R.string.apply_update_dialog_text_background_ab)
+                        .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do nothing and allow the dialog to be dismissed
+                            }
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                startActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME));
+                            }
+                        })
+                    .show();
+                }
+            })
+            .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Do nothing and allow the dialog to be dismissed
+                }
+            })
+            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mStartUpdateVisible = false;
+                }
+            })
+        .show();
+    }
+
+    private void startRecoveryUpdate(UpdatePreference pref) {
+        final UpdateInfo updateInfo = pref.getUpdateInfo();
 
         // Get the message body right
         String dialogBody = getString(R.string.apply_update_dialog_text, updateInfo.getName());
@@ -723,5 +841,27 @@ public class UpdatesSettings extends PreferenceFragmentCompat implements
 
     private void showSnack(String mMessage) {
         ((UpdatesActivity) getActivity()).showSnack(mMessage);
+    }
+
+    // Remove unused preference settings
+    public void cleanupPrefs() {
+        if (mPrefs.getInt("pref_update_types", -1) != -1) {
+            mPrefs.edit().remove("pref_update_types").apply();
+            Log.d(TAG, "Removed stale preference 'pref_update_types'");
+        }
+    }
+
+    @Override
+    public void onDisplayInfo(UpdatePreference pref) {
+        Spanned message = Html.fromHtml(
+                getString(R.string.blocked_update_dialog_message,
+                getString(R.string.blocked_update_info_url)));
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.blocked_update_dialog_title)
+                .setPositiveButton(android.R.string.ok, null)
+                .setMessage(message)
+                .show();
+        TextView content = (TextView) dialog.findViewById(android.R.id.message);
+        content.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

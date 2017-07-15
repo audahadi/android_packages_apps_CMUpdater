@@ -37,6 +37,8 @@ public class UpdatePreference extends Preference implements OnClickListener, OnL
     public static final int STYLE_DOWNLOADED = 3;
     public static final int STYLE_INSTALLED = 4;
     public static final int STYLE_COMPLETING = 5;
+    public static final int STYLE_BLOCKED = 6;
+    public static final int STYLE_INSTALLING = 7;
 
     public interface OnActionListener {
         void onStartDownload(UpdatePreference pref);
@@ -44,6 +46,7 @@ public class UpdatePreference extends Preference implements OnClickListener, OnL
         void onStopDownload(UpdatePreference pref);
         void onStartUpdate(UpdatePreference pref);
         void onDeleteUpdate(UpdatePreference pref);
+        void onDisplayInfo(UpdatePreference pref);
     }
 
     public interface OnReadyListener {
@@ -88,6 +91,9 @@ public class UpdatePreference extends Preference implements OnClickListener, OnL
                 case STYLE_NEW:
                     mOnActionListener.onStartDownload(UpdatePreference.this);
                     break;
+                case STYLE_BLOCKED:
+                    mOnActionListener.onDisplayInfo(UpdatePreference.this);
+                    break;
             }
         }
     };
@@ -104,10 +110,9 @@ public class UpdatePreference extends Preference implements OnClickListener, OnL
     public void onBindViewHolder(PreferenceViewHolder view) {
         super.onBindViewHolder(view);
 
-        // We only show updates of type Utils.getUpdateType(), so just use that here
-        mBuildType = Utils.buildTypeToString(Utils.getUpdateType()).toLowerCase();
-        mBuildVersionName = Utils.getInstalledVersionName();
-        mBuildDateString = Utils.getDateLocalizedFromFileName(mContext, mUpdateInfo.getFileName());
+        mBuildType = mUpdateInfo.getType();
+        mBuildVersionName = mUpdateInfo.getVersion();
+        mBuildDateString = Utils.getDateLocalized(mContext, mUpdateInfo.getDate());
 
         // Store the views from the layout
         mTitleText = (TextView)view.findViewById(R.id.title);
@@ -138,6 +143,7 @@ public class UpdatePreference extends Preference implements OnClickListener, OnL
         switch (mStyle) {
             case STYLE_DOWNLOADED:
             case STYLE_INSTALLED:
+            case STYLE_BLOCKED:
                 confirmDelete();
                 break;
 
@@ -282,6 +288,24 @@ public class UpdatePreference extends Preference implements OnClickListener, OnL
                 mButton.setVisibility(View.GONE);
                 mTitleText.setText(String.format("%1$s %2$s",
                         mBuildType, mContext.getString(R.string.type_completing)));
+                break;
+
+            case STYLE_BLOCKED:
+                mStopDownloadButton.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                mButton.setVisibility(View.VISIBLE);
+                mTitleText.setText(String.format("%1$s %2$s",
+                        mBuildType, mContext.getString(R.string.type_blocked)));
+                mButton.setText(mContext.getString(R.string.info_button));
+                break;
+
+            case STYLE_INSTALLING:
+                mStopDownloadButton.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setIndeterminate(true);
+                mButton.setVisibility(View.GONE);
+                mTitleText.setText(String.format("%1$s %2$s",
+                        mBuildType, mContext.getString(R.string.type_installing)));
                 break;
 
             case STYLE_NEW:

@@ -63,6 +63,7 @@
   <string name="delete_updates_failure_message">Došlo je do greške pri brisanju datoteke za ažuriranje.</string>
   <string name="delete_updates_noFolder_message">Mapa s ažuriranjima nije pronađena.</string>
   <string name="delete_updates_success_message">Sva su preuzeta ažuriranja izbrisana.</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <string name="header_os">LineageOS\n%1$s</string>
   <string name="header_summary">%1$s\n%2$s • Android %3$s\n%4$s</string>
@@ -72,6 +73,7 @@
   <string name="type_downloaded">• Preuzeto</string>
   <string name="type_downloading">• Preuzima se</string>
   <string name="summary">%1$s\nLineageOS %2$s • Android %3$s</string>
-  <string name="download_button">Preuzmi</string>
   <string name="install_button">Instaliraj</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Primijeni ažuriranje</string>
 </resources>

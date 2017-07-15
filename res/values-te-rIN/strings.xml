@@ -60,7 +60,9 @@
   <string name="delete_updates_failure_message">నవీకరణ చేయబడిన ఫైలును తొలిగించడంలో ఒక దోషం ఏర్పడింది</string>
   <string name="delete_updates_noFolder_message">నవీకరణ సంచిక కనుగొనబడలేదు</string>
   <string name="delete_updates_success_message">డౌన్లోడ్ చేయబడిన నవీకరణలు అన్నీ తొలిగించబడ్డాయి</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <!-- Build item -->
-  <string name="download_button">డౌన్‌లోడ్ చేయి</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">నవీకరణను వర్తింపజేయుము</string>
 </resources>

@@ -60,7 +60,9 @@
   <string name="delete_updates_failure_message">अद्यतन फ़ाइल को हटाते समय त्रुटि हुई</string>
   <string name="delete_updates_noFolder_message">अद्यतन फ़ोल्डर नहीं मिला</string>
   <string name="delete_updates_success_message">डाउनलोड किए गए सभी अद्यतनों को हटा दिया गया</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <!-- Build item -->
-  <string name="download_button">डाउनलोड करें</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">अद्यतन को लागू करें</string>
 </resources>

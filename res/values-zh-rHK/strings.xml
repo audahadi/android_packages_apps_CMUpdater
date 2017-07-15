@@ -60,7 +60,9 @@
   <string name="delete_updates_failure_message">刪除更新檔案時出現錯誤</string>
   <string name="delete_updates_noFolder_message">找不到更新資料夾</string>
   <string name="delete_updates_success_message">已刪除所有已下載的更新</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <!-- Build item -->
-  <string name="download_button">下載</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">套用更新</string>
 </resources>

@@ -60,7 +60,9 @@
   <string name="delete_updates_failure_message">Yeniləmə faylını silərkən xəta baş verdi</string>
   <string name="delete_updates_noFolder_message">Yeniləmə qovluğu tapılmadı</string>
   <string name="delete_updates_success_message">Endirilən bütün yeniləmələr silindi</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <!-- Build item -->
-  <string name="download_button">Endir</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Yeniləməni tətbiq et</string>
 </resources>

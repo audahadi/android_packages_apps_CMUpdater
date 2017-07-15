@@ -21,6 +21,7 @@
   <string name="dialog_cancel">Batal</string>
   <string name="dialog_update">Perbarui</string>
   <string name="dialog_close">Tutup</string>
+  <string name="dialog_reboot">Mulai ulang</string>
   <!-- Settings strings -->
   <string name="available_updates_title">Pembaruan tersedia</string>
   <string name="no_available_updates_intro">Pembaruan tidak ditemukan. Untuk memeriksa pembaruan secara manual, gunakan tombol Segarkan.</string>
@@ -43,11 +44,14 @@
   <string name="confirm_download_cancelation_dialog_message">Batalkan unduhan saat ini?</string>
   <string name="download_cancelled">Unduhan dibatalkan</string>
   <string name="download_already_running">Unduhan sedang berjalan</string>
+  <string name="unable_to_stop_download">Tidak dapat menghentikan unduhan</string>
   <string name="unable_to_download_file">Tidak dapat mengunduh berkas pembaruan</string>
   <string name="download_not_found">Unduhan tidak ditemukan</string>
   <string name="not_download_success">Pembaruan berhasil diunduh</string>
   <string name="not_download_failure">Pengunduhan pembaruan tidak berhasil</string>
   <string name="not_action_install_update">Mulai ulang dan instal</string>
+  <string name="not_action_install_reboot">Mulai ulang</string>
+  <string name="not_action_install">Pasang</string>
   <string name="not_download_install_notice">Pembaruan <xliff:g id="filename">%s</xliff:g> sudah berhasil diunduh. Ketika mengetuk \'Mulai ulang dan instal\', perangkat akan dimulai ulang dan menginstal pembaruan.\n\nCatatan: Diperlukan Recovery yang kompatibel agar pemasangan dapat bekerja secara otomatis.</string>
   <string name="verification_failed">Verifikasi gagal. Unduhan rusak atau tidak aman</string>
   <!-- Apply update strings -->
@@ -63,6 +67,7 @@
   <string name="delete_updates_failure_message">Ada kesalahan pada penghapusan berkas pembaruan</string>
   <string name="delete_updates_noFolder_message">Folder pembaruan tidak ditemukan</string>
   <string name="delete_updates_success_message">Semua pembaruan yang diunduh dihapus</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <string name="header_os">LineageOS\n%1$s</string>
   <string name="header_summary">%1$s\n%2$s • Android %3$s\n%4$s</string>
@@ -71,7 +76,13 @@
   <string name="type_installed">• Terpasang</string>
   <string name="type_downloaded">• Terunduh</string>
   <string name="type_downloading">• Mengunduh</string>
+  <string name="type_completing">• Menyelesaikan</string>
   <string name="summary">%1$s\nLineageOS %2$s • Android %3$s</string>
   <string name="download_button">Unduh</string>
   <string name="install_button">Pasang</string>
+  <string name="info_button">Info</string>
+  <string name="reboot_button">Mulai ulang</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Terapkan pembaruan</string>
+  <string name="error_title">Kesalahan</string>
 </resources>

@@ -60,7 +60,9 @@
   <string name="delete_updates_failure_message">Beim Läsche vum Aktualiséierungsfichier gouf et e Feeler</string>
   <string name="delete_updates_noFolder_message">Aktualiséierungsdossier net fonnt</string>
   <string name="delete_updates_success_message">All déi erofgelueden Aktualiséierunge goufe geläscht</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <!-- Build item -->
-  <string name="download_button">Eroflueden</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Aktualiséierung installéieren</string>
 </resources>

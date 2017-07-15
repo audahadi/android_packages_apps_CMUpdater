@@ -60,7 +60,9 @@
   <string name="delete_updates_failure_message">خطا در حذف فایل بروزرسانی</string>
   <string name="delete_updates_noFolder_message">پوشه بروزرسانی پیدا نشد</string>
   <string name="delete_updates_success_message">تمام بروزرسانی‌های دانلودشده حذف شد</string>
+  <!-- Info about blocked updates -->
   <!-- Header -->
   <!-- Build item -->
-  <string name="download_button">دانلود</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">انجام بروزرسانی</string>
 </resources>

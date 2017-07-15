@@ -43,6 +43,7 @@
   <string name="confirm_download_cancelation_dialog_message">Cancel the current download?</string>
   <string name="download_cancelled">Download cancelled</string>
   <string name="download_already_running">A download is already running</string>
+  <string name="unable_to_stop_download">Unable to stop download</string>
   <string name="unable_to_download_file">Unable to download the update file</string>
   <string name="download_not_found">Download not found</string>
   <string name="not_download_success">Update downloaded successfully</string>
@@ -63,6 +64,9 @@
   <string name="delete_updates_failure_message">There was an error deleting the update file</string>
   <string name="delete_updates_noFolder_message">Update folder not found</string>
   <string name="delete_updates_success_message">All downloaded updates deleted</string>
+  <!-- Info about blocked updates -->
+  <string name="blocked_update_dialog_title">Update blocked</string>
+  <string name="blocked_update_dialog_message">This update cannot be installed using the updater app.  Please read the <![CDATA[<a href="%1$s">]]>;LineageOS wiki<![CDATA[</a>]]>; for more information.</string>
   <!-- Header -->
   <string name="header_os">LineageOS\n%1$s</string>
   <string name="header_summary">%1$s\n%2$s • Android %3$s\n%4$s</string>
@@ -71,6 +75,12 @@
   <string name="type_installed">• Installed</string>
   <string name="type_downloaded">• Downloaded</string>
   <string name="type_downloading">• Downloading</string>
+  <string name="type_completing">• Completing</string>
+  <string name="type_blocked">• Blocked</string>
   <string name="summary">%1$s\nLineageOS %2$s • Android %3$s</string>
   <string name="download_button">Download</string>
+  <string name="install_button">Install</string>
+  <string name="info_button">Info</string>
+  <!-- A/B OTA -->
+  <string name="apply_ab_update_dialog_title">Apply update</string>
 </resources>
